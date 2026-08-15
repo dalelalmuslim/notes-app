@@ -19,7 +19,7 @@
     <string name="unsaved_changes_message">لديك تغييرات غير محفوظة. هل تريد تجاهلها والمغادرة؟</string>
     <string name="discard">تجاهل</string>
     <string name="title_limit_reached">العنوان محدود بـ 120 حرفًا</string>
-    <string name="content_limit_reached">المحتوى محدود بـ 20,000 حرف</string>
+    <string name="content_limit_reached">المحتوى محدود بـ 30,000 حرف</string>
 
     <!-- الإجراءات والأخطاء -->
     <string name="empty_note_rejected">الملاحظة فارغة</string>

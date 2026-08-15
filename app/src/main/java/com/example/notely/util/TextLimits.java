@@ -11,7 +11,7 @@ package com.example.notely.util;
 public final class TextLimits {
 
     public static final int MAX_TITLE_LENGTH = 120;
-    public static final int MAX_CONTENT_LENGTH = 20000;
+    public static final int MAX_CONTENT_LENGTH = 30000;
 
     private TextLimits() {
     }

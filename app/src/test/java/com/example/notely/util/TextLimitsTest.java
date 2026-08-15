@@ -9,7 +9,7 @@ public class TextLimitsTest {
     @Test
     public void requiredLimits() {
         assertEquals(120, TextLimits.MAX_TITLE_LENGTH);
-        assertEquals(20000, TextLimits.MAX_CONTENT_LENGTH);
+        assertEquals(30000, TextLimits.MAX_CONTENT_LENGTH);
     }
 
     @Test

@@ -19,7 +19,7 @@
     <string name="unsaved_changes_message">You have unsaved changes. Discard them and leave?</string>
     <string name="discard">Discard</string>
     <string name="title_limit_reached">Title is limited to 120 characters</string>
-    <string name="content_limit_reached">Content is limited to 20,000 characters</string>
+    <string name="content_limit_reached">Content is limited to 30,000 characters</string>
 
     <!-- Actions / errors -->
     <string name="empty_note_rejected">Note is empty</string>
