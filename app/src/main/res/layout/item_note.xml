@@ -2,12 +2,11 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginLeft="8dp"
-    android:layout_marginRight="8dp"
-    android:layout_marginTop="4dp"
-    android:layout_marginBottom="4dp"
+    android:layout_marginBottom="8dp"
     android:background="@drawable/item_note_background"
-    android:gravity="center_vertical"
+    android:clickable="true"
+    android:elevation="1dp"
+    android:focusable="true"
     android:minHeight="72dp"
     android:orientation="vertical"
     android:padding="16dp">
@@ -19,24 +18,24 @@
         android:ellipsize="end"
         android:maxLines="1"
         android:textColor="@color/textPrimary"
-        android:textSize="18sp"
+        android:textSize="17sp"
         android:textStyle="bold" />
 
     <TextView
         android:id="@+id/note_preview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="2dp"
+        android:layout_marginTop="4dp"
         android:ellipsize="end"
         android:maxLines="2"
-        android:textColor="@color/textPrimary"
+        android:textColor="@color/textSecondary"
         android:textSize="14sp" />
 
     <TextView
         android:id="@+id/note_date"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="10dp"
         android:textColor="@color/textSecondary"
         android:textSize="12sp" />
 

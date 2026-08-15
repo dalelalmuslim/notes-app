@@ -3,15 +3,19 @@ plugins {
 }
 
 android {
-    namespace 'com.example.notesapp'
+    namespace 'com.example.notely'
     compileSdk 34
 
     defaultConfig {
+        // applicationId intentionally stays "com.example.notesapp": the Android
+        // data directory is keyed by applicationId, and changing it would orphan
+        // the existing notes.json and destroy user notes on upgrade. The Java
+        // packages/namespace are fully migrated to com.example.notely instead.
         applicationId "com.example.notesapp"
         minSdk 21
         targetSdk 34
         versionCode 1
-        versionName "1.0"
+        versionName "1.0.0"
     }
 
     buildTypes {
@@ -23,5 +27,19 @@ android {
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
+        encoding 'UTF-8'
     }
+
+    buildFeatures {
+        buildConfig = true
+    }
+
+    testOptions {
+        unitTests.returnDefaultValues = true
+    }
+}
+
+dependencies {
+    implementation 'androidx.recyclerview:recyclerview:1.3.2'
+    testImplementation 'junit:junit:4.13.2'
 }

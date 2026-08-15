@@ -3,31 +3,39 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ListView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/notes_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false"
-        android:divider="@null"
-        android:dividerHeight="0dp"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:paddingTop="4dp"
         android:paddingBottom="88dp" />
 
     <LinearLayout
         android:id="@+id/empty_state"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:gravity="center"
         android:orientation="vertical"
         android:padding="24dp">
 
+        <ImageView
+            android:layout_width="72dp"
+            android:layout_height="72dp"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_empty_notes" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
             android:gravity="center"
             android:text="@string/empty_state_title"
             android:textColor="@color/textPrimary"
-            android:textSize="20sp"
+            android:textSize="22sp"
             android:textStyle="bold" />
 
         <TextView
@@ -38,6 +46,22 @@
             android:text="@string/empty_state_subtitle"
             android:textColor="@color/textSecondary"
             android:textSize="16sp" />
+
+        <Button
+            android:id="@+id/empty_state_new_note"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:background="@drawable/btn_primary"
+            android:minHeight="48dp"
+            android:minWidth="0dp"
+            android:paddingStart="24dp"
+            android:paddingEnd="24dp"
+            android:text="@string/empty_state_new_note"
+            android:textAllCaps="false"
+            android:textColor="@color/onPrimary"
+            android:textSize="15sp" />
+
     </LinearLayout>
 
     <ImageButton
@@ -50,7 +74,8 @@
         android:contentDescription="@string/new_note"
         android:elevation="6dp"
         android:padding="16dp"
+        android:scaleType="fitCenter"
         android:src="@drawable/ic_add"
-        android:scaleType="fitCenter" />
+        android:tint="@color/fabIcon" />
 
 </FrameLayout>

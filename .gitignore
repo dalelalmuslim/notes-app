@@ -8,3 +8,4 @@ local.properties
 .externalNativeBuild
 .cxx
 app/build/
+/apk/

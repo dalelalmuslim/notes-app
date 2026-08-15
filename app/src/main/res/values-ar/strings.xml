@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">نوتلي</string>
+
+    <string name="empty_state_title">لا توجد ملاحظات بعد</string>
+    <string name="empty_state_subtitle">ستظهر ملاحظاتك هنا.</string>
+    <string name="empty_state_new_note">أنشئ ملاحظتك الأولى</string>
+
+    <string name="new_note">ملاحظة جديدة</string>
+    <string name="edit_note">تعديل الملاحظة</string>
+
+    <string name="editor_title_hint">العنوان</string>
+    <string name="editor_content_hint">ابدأ بالكتابة…</string>
+    <string name="editor_save">حفظ</string>
+
+    <string name="delete_confirm_message">هل تريد حذف هذه الملاحظة؟</string>
+    <string name="delete">حذف</string>
+    <string name="cancel">إلغاء</string>
+
+    <string name="empty_note_rejected">الملاحظة فارغة</string>
+    <string name="save_failed">تعذّر حفظ الملاحظة</string>
+    <string name="delete_failed">تعذّر حذف الملاحظة</string>
+    <string name="note_not_found">هذه الملاحظة لم تعد موجودة</string>
+
+    <string name="update_title">يتوفر تحديث جديد</string>
+    <string name="update_current_version">الإصدار الحالي: %1$s</string>
+    <string name="update_latest_version">الإصدار الأحدث: %1$s</string>
+    <string name="update_release_notes">ملاحظات الإصدار:\n%1$s</string>
+    <string name="update_action">تحديث</string>
+    <string name="update_later">لاحقًا</string>
+    <string name="update_unavailable">تعذّر فتح صفحة التحديث</string>
+</resources>
