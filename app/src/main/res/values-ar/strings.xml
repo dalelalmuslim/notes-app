@@ -1,27 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">نوتلي</string>
+    <string name="app_name">Notely</string>
 
+    <!-- الشاشة الرئيسية -->
+    <string name="settings">الإعدادات</string>
     <string name="empty_state_title">لا توجد ملاحظات بعد</string>
     <string name="empty_state_subtitle">ستظهر ملاحظاتك هنا.</string>
     <string name="empty_state_new_note">أنشئ ملاحظتك الأولى</string>
 
+    <!-- المحرر -->
     <string name="new_note">ملاحظة جديدة</string>
     <string name="edit_note">تعديل الملاحظة</string>
-
     <string name="editor_title_hint">العنوان</string>
     <string name="editor_content_hint">ابدأ بالكتابة…</string>
     <string name="editor_save">حفظ</string>
+    <string name="back">رجوع</string>
+    <string name="unsaved_changes_title">تجاهل التغييرات؟</string>
+    <string name="unsaved_changes_message">لديك تغييرات غير محفوظة. هل تريد تجاهلها والمغادرة؟</string>
+    <string name="discard">تجاهل</string>
+    <string name="title_limit_reached">العنوان محدود بـ 120 حرفًا</string>
+    <string name="content_limit_reached">المحتوى محدود بـ 20,000 حرف</string>
 
-    <string name="delete_confirm_message">هل تريد حذف هذه الملاحظة؟</string>
-    <string name="delete">حذف</string>
-    <string name="cancel">إلغاء</string>
-
+    <!-- الإجراءات والأخطاء -->
     <string name="empty_note_rejected">الملاحظة فارغة</string>
     <string name="save_failed">تعذّر حفظ الملاحظة</string>
     <string name="delete_failed">تعذّر حذف الملاحظة</string>
     <string name="note_not_found">هذه الملاحظة لم تعد موجودة</string>
 
+    <!-- تأكيد الحذف -->
+    <string name="delete_dialog_title">حذف الملاحظة</string>
+    <string name="delete_confirm_message">ستُحذف هذه الملاحظة نهائيًا ولا يمكن التراجع عن ذلك.</string>
+    <string name="delete">حذف</string>
+    <string name="cancel">إلغاء</string>
+
+    <!-- الإعدادات -->
+    <string name="settings_title">الإعدادات</string>
+    <string name="settings_language">اللغة</string>
+    <string name="settings_language_english">English</string>
+    <string name="settings_language_arabic">العربية</string>
+    <string name="settings_theme">المظهر</string>
+    <string name="settings_theme_system">إعدادات النظام</string>
+    <string name="settings_theme_light">فاتح</string>
+    <string name="settings_theme_dark">داكن</string>
+    <string name="settings_updates">التحديثات</string>
+    <string name="settings_check_for_updates">التحقق من التحديثات</string>
+
+    <!-- حول التطبيق -->
+    <string name="settings_about">حول التطبيق</string>
+    <string name="about_name">Notely</string>
+    <string name="about_version">الإصدار %1$s</string>
+    <string name="about_description">تطبيق ملاحظات شخصية حديث وخفيف ويعمل دون الاتصال بالإنترنت.</string>
+    <string name="about_copyright">© 2026 Notely</string>
+
+    <!-- التحديثات -->
     <string name="update_title">يتوفر تحديث جديد</string>
     <string name="update_current_version">الإصدار الحالي: %1$s</string>
     <string name="update_latest_version">الإصدار الأحدث: %1$s</string>
@@ -29,4 +60,7 @@
     <string name="update_action">تحديث</string>
     <string name="update_later">لاحقًا</string>
     <string name="update_unavailable">تعذّر فتح صفحة التحديث</string>
+    <string name="update_up_to_date">تطبيقك محدّث</string>
+    <string name="update_check_failed">تعذّر التحقق من التحديثات</string>
+    <string name="update_checking">جارٍ التحقق من التحديثات…</string>
 </resources>

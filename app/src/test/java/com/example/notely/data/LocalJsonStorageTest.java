@@ -91,6 +91,40 @@ public class LocalJsonStorageTest {
     }
 
     @Test
+    public void rootNotArray_isTreatedAsCorruptAndPreserved() throws Exception {
+        File dir = tmp.getRoot();
+        File target = new File(dir, "notes.json");
+        writeRaw(target, "{\"id\":\"not-an-array\"}");
+        LocalJsonStorage storage = new LocalJsonStorage(dir);
+        assertTrue(storage.readAll().isEmpty());
+        assertFalse(target.exists());
+        File[] files = dir.listFiles();
+        assertEquals(1, files.length);
+        assertTrue(files[0].getName().startsWith("notes.json.corrupt-"));
+    }
+
+    @Test
+    public void duplicateIds_areBothPreserved() throws Exception {
+        File dir = tmp.getRoot();
+        writeRaw(new File(dir, "notes.json"),
+                "[{\"id\":\"dup\",\"title\":\"a\",\"content\":\"c1\",\"createdAt\":1,\"updatedAt\":1},"
+                        + "{\"id\":\"dup\",\"title\":\"b\",\"content\":\"c2\",\"createdAt\":2,\"updatedAt\":2}]");
+        List<Note> notes = new LocalJsonStorage(dir).readAll();
+        assertEquals(2, notes.size());
+        assertEquals("a", notes.get(0).title);
+        assertEquals("b", notes.get(1).title);
+    }
+
+    @Test
+    public void malformedTimestamps_areSkipped() throws Exception {
+        File dir = tmp.getRoot();
+        writeRaw(new File(dir, "notes.json"),
+                "[{\"id\":\"a\",\"title\":\"ok\",\"content\":\"c\",\"createdAt\":\"1\",\"updatedAt\":1}]");
+        List<Note> notes = new LocalJsonStorage(dir).readAll();
+        assertTrue(notes.isEmpty());
+    }
+
+    @Test
     public void malformedEntry_withinArray_isSkipped() throws Exception {
         File dir = tmp.getRoot();
         writeRaw(new File(dir, "notes.json"),

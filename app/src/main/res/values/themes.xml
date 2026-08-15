@@ -1,12 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.Notely" parent="android:Theme.Material.Light.NoActionBar">
-        <item name="android:windowBackground">@color/windowBackground</item>
-        <item name="android:statusBarColor">@color/windowBackground</item>
-        <item name="android:navigationBarColor">@color/windowBackground</item>
+    <!--
+        Notely design system.
+
+        Theme.Notely.Light and Theme.Notely.Dark own the full palette and the
+        system-level theming attributes. Theme.Notely resolves to Light by
+        default and to Dark in values-night, which is how the "System default"
+        preference follows the device night mode.
+    -->
+
+    <style name="Theme.Notely.Light" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="notelyPrimary">#2B5F8A</item>
+        <item name="notelyOnPrimary">#FFFFFF</item>
+        <item name="notelyWindowBackground">#F7F8FA</item>
+        <item name="notelySurface">#FFFFFF</item>
+        <item name="notelyTextPrimary">#1B1F24</item>
+        <item name="notelyTextSecondary">#5F6B7A</item>
+        <item name="notelyOutline">#E1E6EB</item>
+        <item name="notelyIcon">#5F6B7A</item>
+        <item name="notelyFabRipple">#40FFFFFF</item>
+        <item name="notelyDanger">#C62828</item>
+        <item name="android:windowBackground">#F7F8FA</item>
+        <item name="android:statusBarColor">#F7F8FA</item>
+        <item name="android:navigationBarColor">#F7F8FA</item>
         <item name="android:windowLightStatusBar">true</item>
-        <item name="android:colorPrimary">@color/primary</item>
-        <item name="android:colorAccent">@color/primary</item>
-        <item name="android:colorControlHighlight">@color/primaryContainer</item>
+        <item name="android:colorPrimary">#2B5F8A</item>
+        <item name="android:colorAccent">#2B5F8A</item>
+        <item name="android:colorControlHighlight">#D6E5F2</item>
     </style>
+
+    <style name="Theme.Notely.Dark" parent="android:Theme.Material.NoActionBar">
+        <item name="notelyPrimary">#8FBAD9</item>
+        <item name="notelyOnPrimary">#0F1D28</item>
+        <item name="notelyWindowBackground">#101418</item>
+        <item name="notelySurface">#1A2026</item>
+        <item name="notelyTextPrimary">#E7ECF1</item>
+        <item name="notelyTextSecondary">#9AA7B3</item>
+        <item name="notelyOutline">#2A3138</item>
+        <item name="notelyIcon">#9AA7B3</item>
+        <item name="notelyFabRipple">#33000000</item>
+        <item name="notelyDanger">#F28B82</item>
+        <item name="android:windowBackground">#101418</item>
+        <item name="android:statusBarColor">#101418</item>
+        <item name="android:navigationBarColor">#101418</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:colorPrimary">#8FBAD9</item>
+        <item name="android:colorAccent">#8FBAD9</item>
+        <item name="android:colorControlHighlight">#24384A</item>
+    </style>
+
+    <style name="Theme.Notely" parent="Theme.Notely.Light" />
 </resources>

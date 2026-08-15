@@ -67,6 +67,23 @@ public class GithubReleasesParserTest {
     }
 
     @Test
+    public void prereleaseStyleTag_isRejectedAsInvalidVersion() {
+        String json = "{\"tag_name\":\"v1.1.0-beta\","
+                + "\"html_url\":\"https://github.com/dalelalmuslim/notes-app\"}";
+        assertNull(GithubReleasesParser.parse(json, AppVersion.parse("1.0.0")));
+    }
+
+    @Test
+    public void releaseWithoutSafeDestination_isNotAvailable() {
+        String json = "{\"tag_name\":\"v2.0.0\",\"html_url\":null,\"assets\":[]}";
+        UpdateInfo info = GithubReleasesParser.parse(json, AppVersion.parse("1.0.0"));
+        assertNotNull(info);
+        assertFalse(info.available);
+        assertNull(info.updateUrl);
+        assertNull(info.apkUrl);
+    }
+
+    @Test
     public void nonHttpsDestination_makesUpdateUnavailable() {
         String json = "{\"tag_name\":\"v2.0.0\","
                 + "\"html_url\":\"http://evil.example.com/releases/2\","

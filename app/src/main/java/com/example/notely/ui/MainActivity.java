@@ -1,9 +1,8 @@
 package com.example.notely.ui;
 
-import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
@@ -22,9 +21,7 @@ import com.example.notely.model.Note;
 
 import java.util.List;
 
-public final class MainActivity extends Activity {
-
-    private static final int MAX_RELEASE_NOTES_LENGTH = 400;
+public final class MainActivity extends BaseActivity {
 
     private NoteRepository repository;
     private NotesAdapter adapter;
@@ -32,7 +29,6 @@ public final class MainActivity extends Activity {
     private LinearLayout emptyState;
     private UpdateChecker updateChecker;
     private boolean updateDialogShown;
-    private String currentVersionName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +37,6 @@ public final class MainActivity extends Activity {
 
         repository = new NoteRepository(this);
         updateChecker = new UpdateChecker(this);
-        currentVersionName = versionName();
 
         list = findViewById(R.id.notes_list);
         list.setLayoutManager(new LinearLayoutManager(this));
@@ -71,6 +66,13 @@ public final class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 NoteEditorActivity.openForCreate(MainActivity.this);
+            }
+        });
+
+        findViewById(R.id.btn_settings).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, SettingsActivity.class));
             }
         });
     }
@@ -111,74 +113,32 @@ public final class MainActivity extends Activity {
                     return;
                 }
                 updateDialogShown = true;
-                showUpdateDialog(info);
+                UpdatePrompts.showAvailable(MainActivity.this, info);
             }
         });
     }
 
-    private void showUpdateDialog(UpdateInfo info) {
-        new AlertDialog.Builder(this)
-                .setTitle(R.string.update_title)
-                .setMessage(buildUpdateMessage(info))
-                .setPositiveButton(R.string.update_action, new android.content.DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(android.content.DialogInterface dialog, int which) {
-                        openUpdateDestination(info);
-                    }
-                })
-                .setNegativeButton(R.string.update_later, null)
-                .show();
-    }
-
-    private String buildUpdateMessage(UpdateInfo info) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(getString(R.string.update_current_version,
-                currentVersionName == null ? "?" : currentVersionName));
-        sb.append('\n');
-        sb.append(getString(R.string.update_latest_version, info.latestVersion.toString()));
-        if (info.releaseNotes != null && !info.releaseNotes.trim().isEmpty()) {
-            String notes = info.releaseNotes.trim();
-            if (notes.length() > MAX_RELEASE_NOTES_LENGTH) {
-                notes = notes.substring(0, MAX_RELEASE_NOTES_LENGTH) + "…";
-            }
-            sb.append("\n\n");
-            sb.append(getString(R.string.update_release_notes, notes));
-        }
-        return sb.toString();
-    }
-
-    private void openUpdateDestination(UpdateInfo info) {
-        String url = info.updateUrl != null ? info.updateUrl : info.apkUrl;
-        if (url == null) {
-            Toast.makeText(this, R.string.update_unavailable, Toast.LENGTH_SHORT).show();
-            return;
-        }
-        try {
-            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
-        } catch (Exception e) {
-            Toast.makeText(this, R.string.update_unavailable, Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private String versionName() {
-        try {
-            return getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
     private void confirmDelete(final Note note) {
-        new AlertDialog.Builder(this)
-                .setMessage(getString(R.string.delete_confirm_message))
-                .setPositiveButton(R.string.delete, new android.content.DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(android.content.DialogInterface dialog, int which) {
-                        deleteNote(note);
-                    }
-                })
+        final AlertDialog dialog = new AlertDialog.Builder(this)
+                .setTitle(R.string.delete_dialog_title)
+                .setMessage(R.string.delete_confirm_message)
+                .setPositiveButton(R.string.delete,
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface d, int which) {
+                                deleteNote(note);
+                            }
+                        })
                 .setNegativeButton(R.string.cancel, null)
-                .show();
+                .create();
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface d) {
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(
+                        ThemeUtils.resolveColor(MainActivity.this, R.attr.notelyDanger));
+            }
+        });
+        dialog.show();
     }
 
     private void deleteNote(final Note note) {

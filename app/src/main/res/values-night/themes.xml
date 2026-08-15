@@ -1,11 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.Notely" parent="android:Theme.Material.NoActionBar">
-        <item name="android:windowBackground">@color/windowBackground</item>
-        <item name="android:statusBarColor">@color/windowBackground</item>
-        <item name="android:navigationBarColor">@color/windowBackground</item>
-        <item name="android:colorPrimary">@color/primary</item>
-        <item name="android:colorAccent">@color/primary</item>
-        <item name="android:colorControlHighlight">@color/primaryContainer</item>
-    </style>
+    <!-- System default theme in night mode: the Dark palette. -->
+    <style name="Theme.Notely" parent="Theme.Notely.Dark" />
 </resources>

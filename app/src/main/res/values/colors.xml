@@ -1,17 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="primary">#2B5F8A</color>
-    <color name="onPrimary">#FFFFFF</color>
-    <color name="primaryContainer">#D6E5F2</color>
-    <color name="windowBackground">#F7F8FA</color>
-    <color name="surface">#FFFFFF</color>
-    <color name="textPrimary">#1B1F24</color>
-    <color name="textSecondary">#5F6B7A</color>
-    <color name="outline">#E1E6EB</color>
-    <color name="icon">#5F6B7A</color>
-    <color name="fabIcon">#FFFFFF</color>
-    <color name="fabRipple">#40FFFFFF</color>
-
+    <!-- Theme-independent colors (launcher branding only). -->
     <color name="ic_launcher_background">#2B5F8A</color>
     <color name="ic_launcher_paper">#FFFFFF</color>
     <color name="ic_launcher_pen">#0F1D28</color>

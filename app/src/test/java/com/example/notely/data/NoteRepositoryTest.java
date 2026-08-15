@@ -72,6 +72,18 @@ public class NoteRepositoryTest {
     }
 
     @Test
+    public void delete_preservesOtherNotes() {
+        NoteRepository repository = repo();
+        Note a = repository.createNoteSync("a", "x");
+        Note b = repository.createNoteSync("b", "y");
+        assertTrue(repository.deleteNoteSync(a.id));
+        List<Note> notes = repository.getNotesSync();
+        assertEquals(1, notes.size());
+        assertEquals(b.id, notes.get(0).id);
+        assertNotNull(repository.getNoteByIdSync(b.id));
+    }
+
+    @Test
     public void delete_missingNote_isIdempotentNoOp() {
         NoteRepository repository = repo();
         assertTrue(repository.deleteNoteSync("does-not-exist"));

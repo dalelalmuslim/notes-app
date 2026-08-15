@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+        Design tokens. Every theme (Light, Dark, System) provides concrete
+        values for these attributes, so views and drawables reference them via
+        ?attr/ and always render in the active theme's palette regardless of
+        the system night mode.
+    -->
+    <attr name="notelyPrimary" format="color" />
+    <attr name="notelyOnPrimary" format="color" />
+    <attr name="notelyWindowBackground" format="color" />
+    <attr name="notelySurface" format="color" />
+    <attr name="notelyTextPrimary" format="color" />
+    <attr name="notelyTextSecondary" format="color" />
+    <attr name="notelyOutline" format="color" />
+    <attr name="notelyIcon" format="color" />
+    <attr name="notelyFabRipple" format="color" />
+    <attr name="notelyDanger" format="color" />
+</resources>

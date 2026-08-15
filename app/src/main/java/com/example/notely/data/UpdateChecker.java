@@ -60,6 +60,20 @@ public final class UpdateChecker {
             callback.onResult(null);
             return;
         }
+        checkNow(callback, now);
+    }
+
+    /**
+     * Performs an update check immediately, bypassing the throttling interval.
+     * Used by the explicit "Check for updates" action in Settings. Fails safe
+     * exactly like {@link #check(ResultCallback)}: on any error the callback
+     * receives {@code null} and the app continues normally.
+     */
+    public void checkNow(final ResultCallback<UpdateInfo> callback) {
+        checkNow(callback, System.currentTimeMillis());
+    }
+
+    private void checkNow(final ResultCallback<UpdateInfo> callback, final long now) {
         AppExecutors.runOnNetworkIo(new Runnable() {
             @Override
             public void run() {
