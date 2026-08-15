@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Notes</string>
+
+    <string name="empty_state_title">No notes yet</string>
+    <string name="empty_state_subtitle">Create your first note</string>
+
+    <string name="new_note">New note</string>
+    <string name="edit_note">Edit note</string>
+
+    <string name="editor_title_hint">Title</string>
+    <string name="editor_content_hint">Note</string>
+    <string name="editor_save">Save</string>
+
+    <string name="delete_confirm_message">Delete this note?</string>
+    <string name="delete">Delete</string>
+    <string name="cancel">Cancel</string>
+
+    <string name="empty_note_rejected">Note is empty</string>
+    <string name="save_failed">Could not save note</string>
+    <string name="delete_failed">Could not delete note</string>
+    <string name="note_not_found">Note no longer exists</string>
+</resources>

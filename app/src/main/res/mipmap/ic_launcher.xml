@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Full-bleed background for legacy (pre-adaptive) launchers -->
+    <path
+        android:fillColor="@color/ic_launcher_background"
+        android:pathData="M0,0 L108,0 L108,108 L0,108 Z" />
+
+    <!-- Paper body (white) with the top-right corner folded -->
+    <path
+        android:fillColor="@color/ic_launcher_paper"
+        android:pathData="M40,30 L64,30 L74,40 L74,74 Q74,78 70,78 L40,78 Q36,78 36,74 L36,34 Q36,30 40,30 Z" />
+
+    <!-- Folded corner under-layer -->
+    <path
+        android:fillColor="#E3E8ED"
+        android:pathData="M64,30 L74,40 L64,40 Z" />
+
+    <!-- Writing lines -->
+    <path
+        android:strokeColor="#90A4AE"
+        android:strokeLineCap="round"
+        android:strokeWidth="2"
+        android:pathData="M40,58 L68,58 M40,66 L68,66" />
+
+    <!-- Pen shaft -->
+    <path
+        android:strokeColor="@color/ic_launcher_pen"
+        android:strokeLineCap="round"
+        android:strokeWidth="4.5"
+        android:pathData="M40,74 L66,48" />
+
+    <!-- Pen nib -->
+    <path
+        android:fillColor="@color/ic_launcher_pen"
+        android:pathData="M63,51 L69,45 L72,42 Z" />
+
+</vector>

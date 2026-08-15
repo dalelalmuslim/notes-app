@@ -1,0 +1,280 @@
+#!/bin/bash
+
+set -u
+set -o pipefail
+
+###############################################################################
+# Pre-Push Validation Gate
+#
+# Purpose:
+#   Fast, deterministic, local validation before Git push.
+#
+# Rules:
+#   - No network access.
+#   - No automatic modification of project files.
+#   - No dependency on Termux PATH leakage.
+#   - Fail closed: any validation failure blocks the push.
+###############################################################################
+
+REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null)" || {
+    echo "❌ ERROR: Not inside a Git repository."
+    exit 1
+}
+
+cd "$REPO_ROOT" || {
+    echo "❌ ERROR: Cannot enter repository root: $REPO_ROOT"
+    exit 1
+}
+
+YAMLLINT_CONFIG=".githooks/yamllint-config.yml"
+
+FAIL=0
+
+###############################################################################
+# Helpers
+###############################################################################
+
+section() {
+    echo
+    echo "=== $1 ==="
+}
+
+fail() {
+    FAIL=1
+}
+
+###############################################################################
+# 0. Environment / tool verification
+###############################################################################
+
+section "0/5 Environment Verification"
+
+if [ ! -x /usr/bin/shellcheck ]; then
+    echo "❌ ERROR: /usr/bin/shellcheck not found."
+    fail
+else
+    echo "✓ ShellCheck: $(/usr/bin/shellcheck --version | awk -F': ' '/version:/ {print $2; exit}')"
+fi
+
+if [ ! -x /usr/bin/python3 ]; then
+    echo "❌ ERROR: /usr/bin/python3 not found."
+    fail
+else
+    echo "✓ Python: $(/usr/bin/python3 --version)"
+fi
+
+if [ ! -f "$YAMLLINT_CONFIG" ]; then
+    echo "❌ ERROR: yamllint config not found:"
+    echo "   $YAMLLINT_CONFIG"
+    fail
+else
+    echo "✓ yamllint config found"
+fi
+
+if ! /usr/bin/python3 -m yamllint --version >/dev/null 2>&1; then
+    echo "❌ ERROR: yamllint is not available through Ubuntu Python."
+    fail
+else
+    echo "✓ yamllint: $(/usr/bin/python3 -m yamllint --version)"
+fi
+
+if [ "$FAIL" -ne 0 ]; then
+    echo
+    echo "❌ BLOCKED: Environment validation failed."
+    exit 1
+fi
+
+###############################################################################
+# Common find exclusions
+###############################################################################
+
+EXCLUDES=(
+    -not -path "./.git/*" -not -path "./.githooks/*"
+    -not -path "./build/*"
+    -not -path "./.gradle/*"
+    -not -path "./node_modules/*"
+)
+
+###############################################################################
+# 1. ShellCheck
+###############################################################################
+
+section "1/5 ShellCheck"
+
+shell_count=0
+
+while IFS= read -r -d '' file; do
+    shell_count=$((shell_count + 1))
+
+    echo "Checking: $file"
+
+    /usr/bin/shellcheck \
+        --severity=error \
+        "$file" || fail
+
+done < <(
+    find . \
+        -type f \
+        \( -name "*.sh" -o -name "gradlew" \) \
+        "${EXCLUDES[@]}" \
+        -print0
+)
+
+if [ "$shell_count" -eq 0 ]; then
+    echo "(no shell scripts found)"
+else
+    echo "Checked $shell_count shell file(s)."
+fi
+
+###############################################################################
+# 2. YAML
+###############################################################################
+
+section "2/5 YAML Validation"
+
+yaml_count=0
+
+while IFS= read -r -d '' file; do
+    yaml_count=$((yaml_count + 1))
+
+    echo "Checking: $file"
+
+    /usr/bin/python3 -m yamllint \
+        -c "$YAMLLINT_CONFIG" \
+        "$file" || fail
+
+done < <(
+    find . \
+        -type f \
+        \( -name "*.yml" -o -name "*.yaml" \) \
+        "${EXCLUDES[@]}" \
+        -print0
+)
+
+if [ "$yaml_count" -eq 0 ]; then
+    echo "(no YAML files found)"
+else
+    echo "Checked $yaml_count YAML file(s)."
+fi
+
+###############################################################################
+# 3. XML Well-Formedness
+###############################################################################
+
+section "3/5 XML Well-Formedness"
+
+xml_count=0
+
+while IFS= read -r -d '' file; do
+    xml_count=$((xml_count + 1))
+
+    echo "Checking: $file"
+
+    if ! /usr/bin/python3 -c \
+        'import sys, xml.dom.minidom; xml.dom.minidom.parse(sys.argv[1])' \
+        "$file"
+    then
+        echo "❌ XML ERROR: $file"
+        fail
+    fi
+
+done < <(
+    find . \
+        -type f \
+        -name "*.xml" \
+        "${EXCLUDES[@]}" \
+        -print0
+)
+
+if [ "$xml_count" -eq 0 ]; then
+    echo "(no XML files found)"
+else
+    echo "Checked $xml_count XML file(s)."
+fi
+
+###############################################################################
+# 4. Git whitespace validation
+#
+# Check the actual tree difference that is about to be pushed.
+#
+# For normal pushes:
+#     remote_sha -> local_sha
+#
+# For a new remote branch:
+#     empty tree -> local_sha
+###############################################################################
+
+section "4/5 Git Whitespace Validation"
+
+ZERO="0000000000000000000000000000000000000000"
+
+while IFS=' ' read -r local_ref local_sha _remote_ref remote_sha; do
+
+    # Ignore malformed/empty input.
+    [ -z "${local_sha:-}" ] && continue
+
+    # Deleted remote ref: nothing to validate.
+    if [ "$local_sha" = "$ZERO" ]; then
+        continue
+    fi
+
+    echo "Checking ref: ${local_ref:-unknown}"
+
+    if [ "$remote_sha" = "$ZERO" ]; then
+
+        # New branch/tag.
+        # Compare the new object against the empty tree.
+        if ! git diff-tree \
+            --check \
+            --root \
+            -r \
+            "$local_sha"
+        then
+            echo "❌ Whitespace errors detected in pushed history."
+            fail
+        fi
+
+    else
+
+        # Existing remote ref.
+        # Validate the actual tree delta being pushed.
+        if ! git diff \
+            --check \
+            "$remote_sha" \
+            "$local_sha"
+        then
+            echo "❌ Whitespace errors detected in pushed changes."
+            fail
+        fi
+
+    fi
+
+done
+
+###############################################################################
+# 5. Final result
+###############################################################################
+
+section "5/5 Final Result"
+
+echo "Repository: $REPO_ROOT"
+
+if [ "$FAIL" -ne 0 ]; then
+    echo
+    echo "❌ PUSH BLOCKED"
+    echo
+    echo "Fix the reported validation errors and run git push again."
+    echo
+    echo "Emergency bypass:"
+    echo "  git push --no-verify"
+    echo
+    echo "NOTE:"
+    echo "  --no-verify bypasses this local hook only."
+    echo "  It does NOT bypass GitHub Actions."
+    exit 1
+fi
+
+echo
+echo "✅ ALL LOCAL VALIDATIONS PASSED"
+echo "→ Git push may proceed."
+exit 0
