@@ -91,6 +91,7 @@ fi
 EXCLUDES=(
     -not -path "./.git/*" -not -path "./.githooks/*"
     -not -path "./build/*"
+    -not -path "./app/build/*"
     -not -path "./.gradle/*"
     -not -path "./node_modules/*"
 )
@@ -224,7 +225,7 @@ while IFS=' ' read -r local_ref local_sha _remote_ref remote_sha; do
 
         # New branch/tag.
         # Compare the new object against the empty tree.
-        if ! git diff-tree \
+        if ! git --no-pager diff-tree \
             --check \
             --root \
             -r \
@@ -238,7 +239,7 @@ while IFS=' ' read -r local_ref local_sha _remote_ref remote_sha; do
 
         # Existing remote ref.
         # Validate the actual tree delta being pushed.
-        if ! git diff \
+        if ! git --no-pager diff \
             --check \
             "$remote_sha" \
             "$local_sha"
