@@ -79,11 +79,27 @@ public final class AppSettings {
     }
 
     /**
-     * Returns a context whose resources use the persisted language and whose
-     * default locale matches. Must be applied in {@code attachBaseContext}
-     * before the activity's resources are first used.
+     * Returns whether the user has explicitly chosen a language. Until the
+     * user picks English or Arabic in Settings, no preference is saved and
+     * the app follows the device locale via Android's normal resource
+     * resolution.
+     */
+    public boolean hasLanguageOverride() {
+        return store.getString(KEY_LANGUAGE, null) != null;
+    }
+
+    /**
+     * Returns a context whose resources use the persisted language when the
+     * user has explicitly chosen one. When no language preference is saved,
+     * the system locale is left untouched so Android's normal resource
+     * resolution runs (values-ar for Arabic devices, values/ otherwise).
+     * Must be applied in {@code attachBaseContext} before the activity's
+     * resources are first used.
      */
     public static Context attachLocale(Context base) {
+        if (!get(base).hasLanguageOverride()) {
+            return base;
+        }
         Locale locale = LANGUAGE_ARABIC.equals(getLanguage(base))
                 ? new Locale(LANGUAGE_ARABIC)
                 : Locale.ENGLISH;
