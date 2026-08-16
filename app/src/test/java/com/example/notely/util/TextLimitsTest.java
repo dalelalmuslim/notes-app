@@ -43,7 +43,7 @@ public class TextLimitsTest {
     @Test
     public void truncate_longContent_limitsToMaxContent() {
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < 25000; i++) {
+        for (int i = 0; i < 40000; i++) {
             sb.append('x');
         }
         String out = TextLimits.truncate(sb.toString(), TextLimits.MAX_CONTENT_LENGTH);
