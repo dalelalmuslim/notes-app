@@ -19,13 +19,6 @@ android {
         versionName "1.1.0"
     }
 
-    buildTypes {
-        release {
-            minifyEnabled false
-            signingConfig signingConfigs.release
-        }
-    }
-
     signingConfigs {
         release {
             def keystoreBase64 = System.getenv("RELEASE_KEYSTORE_BASE64")
@@ -40,6 +33,13 @@ android {
                 keyAlias keyAlias
                 keyPassword keyPassword
             }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            signingConfig signingConfigs.release
         }
     }
 
