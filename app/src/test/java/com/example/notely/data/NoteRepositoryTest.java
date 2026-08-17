@@ -11,6 +11,10 @@ import com.example.notely.model.Note;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -118,5 +122,88 @@ public class NoteRepositoryTest {
             assertTrue(repository.deleteNoteSync(created.id));
         }
         assertTrue(repository.getNotesSync().isEmpty());
+    }
+
+    @Test
+    public void createThenUpdate_autosaveSequence_preservesSingleNote() {
+        // The persistence sequence autosave produces for a brand-new note: a
+        // first create, then an update with newer content. Exactly one note
+        // must remain, keeping its identity and creation time.
+        NoteRepository repository = repo();
+        Note created = repository.createNoteSync("First", "draft");
+        assertNotNull(created);
+        assertTrue(repository.updateNoteSync(created.id, "First", "final"));
+        List<Note> notes = repository.getNotesSync();
+        assertEquals(1, notes.size());
+        Note saved = notes.get(0);
+        assertEquals(created.id, saved.id);
+        assertEquals(created.createdAt, saved.createdAt);
+        assertEquals("final", saved.content);
+    }
+
+    @Test
+    public void serializedSaves_newerContentCannotBeOverwrittenByOlder() throws Exception {
+        // Mimics the autosave pipeline: successive snapshots are applied
+        // through a single worker (exactly like AppExecutors' single-threaded
+        // disk executor), so an older snapshot can never land after a newer
+        // one, and no update is lost.
+        NoteRepository repository = repo();
+        Note created = repository.createNoteSync("base", "base");
+        ExecutorService worker = Executors.newSingleThreadExecutor();
+        try {
+            final CountDownLatch done = new CountDownLatch(2);
+            worker.execute(new Runnable() {
+                @Override
+                public void run() {
+                    repository.updateNoteSync(created.id, "base", "older");
+                    done.countDown();
+                }
+            });
+            worker.execute(new Runnable() {
+                @Override
+                public void run() {
+                    repository.updateNoteSync(created.id, "base", "newer");
+                    done.countDown();
+                }
+            });
+            assertTrue(done.await(3, TimeUnit.SECONDS));
+        } finally {
+            worker.shutdownNow();
+        }
+        Note finalNote = repository.getNoteByIdSync(created.id);
+        assertEquals("newer", finalNote.content);
+        assertEquals(1, repository.getNotesSync().size());
+    }
+
+    @Test
+    public void asyncUpdateQueue_latestContentWins() throws Exception {
+        // Through the real async API, saves are serialized on the single disk
+        // worker; the newest queued save must be the final persisted state and
+        // must not create duplicates.
+        NoteRepository repository = repo();
+        Note created = repository.createNoteSync("t", "v0");
+        repository.updateNote(created.id, "t", "v1", new ResultCallback<Boolean>() {
+            @Override
+            public void onResult(Boolean ok) {
+            }
+        });
+        repository.updateNote(created.id, "t", "v2", new ResultCallback<Boolean>() {
+            @Override
+            public void onResult(Boolean ok) {
+            }
+        });
+        long deadline = System.currentTimeMillis() + 3000;
+        Note latest = null;
+        while (System.currentTimeMillis() < deadline) {
+            Note note = repository.getNoteByIdSync(created.id);
+            if (note != null && "v2".equals(note.content)) {
+                latest = note;
+                break;
+            }
+            Thread.sleep(10);
+        }
+        assertNotNull(latest);
+        assertEquals("v2", latest.content);
+        assertEquals(1, repository.getNotesSync().size());
     }
 }
