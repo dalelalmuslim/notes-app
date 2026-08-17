@@ -24,15 +24,14 @@ android {
             def ksBase64 = System.getenv("RELEASE_KEYSTORE_BASE64")
             def ksPassword = System.getenv("RELEASE_KEYSTORE_PASSWORD")
             def ksAlias = System.getenv("RELEASE_KEY_ALIAS")
-            def ksKeyPassword = System.getenv("RELEASE_KEY_PASSWORD")
-            if (ksBase64 && ksPassword && ksAlias && ksKeyPassword) {
+            if (ksBase64 && ksPassword && ksAlias) {
                 def keystoreFile = file("release.keystore")
                 def decoder = java.util.Base64.getDecoder()
                 new File(keystoreFile.absolutePath).bytes = decoder.decode(ksBase64)
                 storeFile keystoreFile
                 storePassword ksPassword
                 keyAlias ksAlias
-                keyPassword ksKeyPassword
+                keyPassword ksPassword
             }
         }
     }
