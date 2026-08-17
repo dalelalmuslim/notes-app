@@ -27,7 +27,7 @@ android {
             def keyPassword = System.getenv("RELEASE_KEY_PASSWORD")
             if (keystoreBase64 && keystorePassword && keyAlias && keyPassword) {
                 def keystoreFile = file("release.keystore")
-                new File(keystoreFile.absolutePath).bytes = java.util.Base64.getDecoder().decode(keystoreBase64)
+                new File(keystoreFile.absolutePath).bytes = java.util.Base64.getDecoder().decode(keystoreBase64 as String)
                 storeFile keystoreFile
                 storePassword keystorePassword
                 keyAlias keyAlias
