@@ -1,5 +1,6 @@
 plugins {
     id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
 }
 
 android {
@@ -30,6 +31,12 @@ android {
         encoding 'UTF-8'
     }
 
+    // Kotlin/Java interop: keep the default Java source directory and also
+    // recognize src/main/kotlin for future Kotlin sources.
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+    }
+
     buildFeatures {
         buildConfig = true
     }
@@ -40,6 +47,7 @@ android {
 }
 
 dependencies {
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib:2.0.21'
     implementation 'androidx.recyclerview:recyclerview:1.3.2'
     testImplementation 'junit:junit:4.13.2'
 }
