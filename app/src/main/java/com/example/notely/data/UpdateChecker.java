@@ -40,6 +40,7 @@ public final class UpdateChecker {
     private static final String API_HOST = "api.github.com";
     private static final String API_URL =
             "https://api.github.com/repos/dalelalmuslim/notes-app/releases/latest";
+    private static final int MAX_RESPONSE_BYTES = 1024 * 1024; // 1 MB
 
     private final Context context;
     private final SharedPreferences prefs;
@@ -132,7 +133,13 @@ public final class UpdateChecker {
                 ByteArrayOutputStream out = new ByteArrayOutputStream();
                 byte[] buffer = new byte[4096];
                 int read;
+                int totalRead = 0;
                 while ((read = in.read(buffer)) != -1) {
+                    totalRead += read;
+                    if (totalRead > MAX_RESPONSE_BYTES) {
+                        Log.w(TAG, "GitHub API response exceeds 1 MB limit");
+                        return null;
+                    }
                     out.write(buffer, 0, read);
                 }
                 return new String(out.toByteArray(), StandardCharsets.UTF_8);
