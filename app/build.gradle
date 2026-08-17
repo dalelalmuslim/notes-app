@@ -21,18 +21,18 @@ android {
 
     signingConfigs {
         release {
-            def keystoreBase64 = System.getenv("RELEASE_KEYSTORE_BASE64")
-            def keystorePassword = System.getenv("RELEASE_KEYSTORE_PASSWORD")
-            def keyAlias = System.getenv("RELEASE_KEY_ALIAS")
-            def keyPassword = System.getenv("RELEASE_KEY_PASSWORD")
-            if (keystoreBase64 && keystorePassword && keyAlias && keyPassword) {
+            def ksBase64 = System.getenv("RELEASE_KEYSTORE_BASE64")
+            def ksPassword = System.getenv("RELEASE_KEYSTORE_PASSWORD")
+            def ksAlias = System.getenv("RELEASE_KEY_ALIAS")
+            def ksKeyPassword = System.getenv("RELEASE_KEY_PASSWORD")
+            if (ksBase64 && ksPassword && ksAlias && ksKeyPassword) {
                 def keystoreFile = file("release.keystore")
                 def decoder = java.util.Base64.getDecoder()
-                new File(keystoreFile.absolutePath).bytes = decoder.decode(keystoreBase64)
+                new File(keystoreFile.absolutePath).bytes = decoder.decode(ksBase64)
                 storeFile keystoreFile
-                storePassword keystorePassword
-                keyAlias keyAlias
-                keyPassword keyPassword
+                storePassword ksPassword
+                keyAlias ksAlias
+                keyPassword ksKeyPassword
             }
         }
     }
