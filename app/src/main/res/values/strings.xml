@@ -8,6 +8,27 @@
     <string name="empty_state_subtitle">Your notes will appear here.</string>
     <string name="empty_state_new_note">Create your first note</string>
 
+    <!-- Search -->
+    <string name="search_hint">Search notes</string>
+    <string name="search_clear">Clear search</string>
+    <string name="search_no_results_title">No matching notes</string>
+    <string name="search_no_results_subtitle">Try a different search.</string>
+
+    <!-- Pin -->
+    <string name="pin_note">Pin note</string>
+    <string name="unpin_note">Unpin note</string>
+    <string name="pinned">Pinned</string>
+
+    <!-- Note colors -->
+    <string name="color_label">Color</string>
+    <string name="color_default">Default color</string>
+    <string name="color_red">Red</string>
+    <string name="color_orange">Orange</string>
+    <string name="color_yellow">Yellow</string>
+    <string name="color_green">Green</string>
+    <string name="color_blue">Blue</string>
+    <string name="color_purple">Purple</string>
+
     <!-- Editor -->
     <string name="new_note">New note</string>
     <string name="edit_note">Edit note</string>
@@ -29,9 +50,22 @@
 
     <!-- Delete confirmation -->
     <string name="delete_dialog_title">Delete note</string>
-    <string name="delete_confirm_message">This note will be permanently deleted. This cannot be undone.</string>
+    <string name="move_to_trash_message">This note will be moved to Trash. You can restore it later.</string>
     <string name="delete">Delete</string>
     <string name="cancel">Cancel</string>
+
+    <!-- Trash -->
+    <string name="trash">Trash</string>
+    <string name="trash_empty">Trash is empty</string>
+    <string name="trash_empty_subtitle">Notes you delete will appear here.</string>
+    <string name="trash_title">Trash</string>
+    <string name="restore">Restore</string>
+    <string name="restore_failed">Could not restore note</string>
+    <string name="delete_forever">Delete forever</string>
+    <string name="delete_forever_title">Delete forever?</string>
+    <string name="delete_forever_message">This note will be permanently deleted. This cannot be undone.</string>
+    <string name="note_restored">Note restored</string>
+    <string name="note_deleted">Note deleted</string>
 
     <!-- Settings -->
     <string name="settings_title">Settings</string>

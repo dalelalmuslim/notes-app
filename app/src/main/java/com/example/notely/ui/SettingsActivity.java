@@ -1,5 +1,6 @@
 package com.example.notely.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -10,12 +11,16 @@ import android.widget.Toast;
 
 import com.example.notely.R;
 import com.example.notely.data.AppSettings;
+import com.example.notely.data.NoteRepository;
 import com.example.notely.data.ResultCallback;
 import com.example.notely.data.UpdateChecker;
 import com.example.notely.data.UpdateInfo;
+import com.example.notely.model.Note;
+
+import java.util.List;
 
 /**
- * Settings screen: language, theme, updates and about information.
+ * Settings screen: language, theme, trash, updates and about information.
  *
  * Language and theme changes persist through {@link AppSettings} and take
  * effect immediately by recreating this activity; the other activities pick
@@ -25,6 +30,7 @@ public final class SettingsActivity extends BaseActivity {
 
     private AppSettings settings;
     private UpdateChecker updateChecker;
+    private NoteRepository repository;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +39,7 @@ public final class SettingsActivity extends BaseActivity {
 
         settings = AppSettings.get(this);
         updateChecker = new UpdateChecker(this);
+        repository = new NoteRepository(this);
 
         TextView headerTitle = findViewById(R.id.header_title);
         headerTitle.setText(R.string.settings_title);
@@ -45,6 +52,7 @@ public final class SettingsActivity extends BaseActivity {
 
         initLanguage();
         initTheme();
+        initTrash();
 
         TextView aboutVersion = findViewById(R.id.about_version);
         aboutVersion.setText(getString(R.string.about_version, versionName()));
@@ -53,6 +61,25 @@ public final class SettingsActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 checkForUpdates();
+            }
+        });
+    }
+
+    private void initTrash() {
+        findViewById(R.id.trash_row).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(SettingsActivity.this, TrashActivity.class));
+            }
+        });
+        final TextView countView = findViewById(R.id.trash_count);
+        repository.getTrashedNotes(new ResultCallback<List<Note>>() {
+            @Override
+            public void onResult(List<Note> notes) {
+                if (isFinishing() || isDestroyed()) {
+                    return;
+                }
+                countView.setText(String.valueOf(notes.size()));
             }
         });
     }

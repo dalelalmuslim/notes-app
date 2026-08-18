@@ -32,4 +32,26 @@
         android:textSize="20sp"
         android:textStyle="bold" />
 
+    <!-- Optional per-screen actions (e.g. the editor's pin button). -->
+    <LinearLayout
+        android:id="@+id/header_actions"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/header_pin"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/pin_note"
+            android:padding="12dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_pin"
+            android:tint="?attr/notelyIcon"
+            android:visibility="gone" />
+
+    </LinearLayout>
+
 </LinearLayout>

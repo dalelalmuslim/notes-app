@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+        Semantic note colors (dark palette). These are deeper, desaturated
+        tints so the dark theme's light text keeps sufficient contrast. The
+        default matches the dark note surface (notelySurface in
+        values-night/themes.xml).
+    -->
+    <color name="note_default">#1A2026</color>
+    <color name="note_red">#4A2B30</color>
+    <color name="note_orange">#4A3A28</color>
+    <color name="note_yellow">#4A4328</color>
+    <color name="note_green">#2A4033</color>
+    <color name="note_blue">#2A3A4A</color>
+    <color name="note_purple">#3A2F4A</color>
+</resources>

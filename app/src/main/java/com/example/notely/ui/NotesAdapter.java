@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -86,6 +87,10 @@ public final class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NoteVi
     public void onBindViewHolder(@NonNull NoteViewHolder holder, int position) {
         Note note = notes.get(position);
 
+        holder.itemView.setBackgroundResource(NoteColorResources.cardBackground(note.color));
+
+        holder.pinView.setVisibility(note.isPinned ? View.VISIBLE : View.GONE);
+
         if (note.title.isEmpty()) {
             holder.titleView.setVisibility(View.GONE);
         } else {
@@ -104,12 +109,14 @@ public final class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NoteVi
     }
 
     static final class NoteViewHolder extends RecyclerView.ViewHolder {
+        final ImageView pinView;
         final TextView titleView;
         final TextView previewView;
         final TextView dateView;
 
         NoteViewHolder(View itemView) {
             super(itemView);
+            pinView = itemView.findViewById(R.id.note_pin);
             titleView = itemView.findViewById(R.id.note_title);
             previewView = itemView.findViewById(R.id.note_preview);
             dateView = itemView.findViewById(R.id.note_date);

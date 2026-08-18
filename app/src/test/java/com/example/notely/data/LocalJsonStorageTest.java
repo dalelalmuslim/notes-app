@@ -2,9 +2,11 @@ package com.example.notely.data;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import com.example.notely.model.Note;
+import com.example.notely.model.NoteColors;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -159,5 +161,62 @@ public class LocalJsonStorageTest {
         assertEquals(3, out.size());
         assertEquals("1", out.get(0).id);
         assertEquals("3", out.get(2).id);
+    }
+
+    @Test
+    public void oldRecordWithoutNewFields_loadsWithDefaults() throws Exception {
+        File dir = tmp.getRoot();
+        writeRaw(new File(dir, "notes.json"),
+                "[{\"id\":\"a\",\"title\":\"old\",\"content\":\"body\",\"createdAt\":1,\"updatedAt\":2}]");
+        List<Note> notes = new LocalJsonStorage(dir).readAll();
+        assertEquals(1, notes.size());
+        Note note = notes.get(0);
+        assertFalse(note.isPinned);
+        assertEquals(NoteColors.DEFAULT, note.color);
+        assertNull(note.deletedAt);
+        assertEquals("old", note.title);
+        assertEquals("body", note.content);
+        assertEquals(1L, note.createdAt);
+        assertEquals(2L, note.updatedAt);
+    }
+
+    @Test
+    public void newFields_roundTrip() throws Exception {
+        LocalJsonStorage storage = new LocalJsonStorage(tmp.getRoot());
+        List<Note> in = Arrays.asList(
+                new Note("id-1", "title", "content", 100L, 200L, true, NoteColors.BLUE, 300L),
+                new Note("id-2", "t", "c", 1L, 2L, false, NoteColors.PURPLE, null));
+        assertTrue(storage.writeAll(in));
+        List<Note> out = storage.readAll();
+        assertEquals(in, out);
+        assertTrue(out.get(0).isPinned);
+        assertEquals(NoteColors.BLUE, out.get(0).color);
+        assertEquals(Long.valueOf(300L), out.get(0).deletedAt);
+        assertFalse(out.get(1).isPinned);
+        assertNull(out.get(1).deletedAt);
+    }
+
+    @Test
+    public void unknownColor_fallsBackToDefault() throws Exception {
+        File dir = tmp.getRoot();
+        writeRaw(new File(dir, "notes.json"),
+                "[{\"id\":\"a\",\"title\":\"t\",\"content\":\"c\",\"createdAt\":1,\"updatedAt\":2,"
+                        + "\"isPinned\":true,\"color\":\"neon\",\"deletedAt\":3}]");
+        Note note = new LocalJsonStorage(dir).readAll().get(0);
+        assertEquals(NoteColors.DEFAULT, note.color);
+        assertTrue(note.isPinned);
+        assertEquals(Long.valueOf(3L), note.deletedAt);
+    }
+
+    @Test
+    public void nonBooleanPinned_andNonLongDeletedAt_fallBack() throws Exception {
+        File dir = tmp.getRoot();
+        writeRaw(new File(dir, "notes.json"),
+                "[{\"id\":\"a\",\"title\":\"t\",\"content\":\"c\",\"createdAt\":1,\"updatedAt\":2,"
+                        + "\"isPinned\":\"yes\",\"color\":\"red\",\"deletedAt\":\"123\"}]");
+        Note note = new LocalJsonStorage(dir).readAll().get(0);
+        assertFalse(note.isPinned);
+        assertEquals(NoteColors.RED, note.color);
+        assertNull(note.deletedAt);
     }
 }

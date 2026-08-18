@@ -10,6 +10,9 @@ import android.text.Selection;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -17,7 +20,11 @@ import com.example.notely.R;
 import com.example.notely.data.NoteRepository;
 import com.example.notely.data.ResultCallback;
 import com.example.notely.model.Note;
+import com.example.notely.model.NoteColors;
 import com.example.notely.util.TextLimits;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public final class NoteEditorActivity extends BaseActivity {
 
@@ -42,6 +49,8 @@ public final class NoteEditorActivity extends BaseActivity {
     private NoteRepository repository;
     private EditText titleInput;
     private EditText contentInput;
+    private ImageButton pinButton;
+    private List<ImageView> colorRings;
     private Handler autosaveHandler;
 
     private final Runnable autosaveRunnable = new Runnable() {
@@ -61,6 +70,17 @@ public final class NoteEditorActivity extends BaseActivity {
     /** Set when the user asked to leave; the editor finishes only after the latest content is saved. */
     private boolean finishRequested;
     private int autosaveFailures;
+
+    /** Currently selected pinned state (loaded, or pending for a new note). */
+    private boolean currentPinned;
+    /** Currently selected color (loaded, or pending for a new note). */
+    private String currentColor = NoteColors.DEFAULT;
+    /** True when pin/color changed on a not-yet-created note and must be applied after create. */
+    private boolean metadataDirty;
+    /** Pinned state to apply once the new note exists. */
+    private boolean pendingPin;
+    /** Color to apply once the new note exists (null means unchanged from default). */
+    private String pendingColor;
 
     public static void openForCreate(Context context) {
         context.startActivity(new Intent(context, NoteEditorActivity.class));
@@ -106,6 +126,9 @@ public final class NoteEditorActivity extends BaseActivity {
             }
         });
 
+        initPinButton();
+        initColorPalette();
+
         if (noteId == null) {
             attachEditorWatchers();
             titleInput.requestFocus();
@@ -143,6 +166,117 @@ public final class NoteEditorActivity extends BaseActivity {
         autosaveHandler.removeCallbacks(autosaveRunnable);
     }
 
+    private void initPinButton() {
+        pinButton = findViewById(R.id.header_pin);
+        pinButton.setVisibility(View.VISIBLE);
+        pinButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onPinClick();
+            }
+        });
+        updatePinButton();
+    }
+
+    private void initColorPalette() {
+        LinearLayout colorsRow = findViewById(R.id.editor_colors);
+        colorRings = new ArrayList<ImageView>();
+        for (int i = 0; i < NoteColors.PALETTE.length; i++) {
+            final String color = NoteColors.PALETTE[i];
+            final View swatch = getLayoutInflater()
+                    .inflate(R.layout.view_color_swatch, colorsRow, false);
+            swatch.findViewById(R.id.color_swatch_dot)
+                    .setBackgroundResource(NoteColorResources.swatch(color));
+            final ImageView ring = swatch.findViewById(R.id.color_swatch_ring);
+            swatch.setContentDescription(getString(colorLabelRes(color)));
+            swatch.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onColorPicked(color);
+                }
+            });
+            colorsRow.addView(swatch);
+            colorRings.add(ring);
+        }
+        updateColorSelection();
+    }
+
+    private void updatePinButton() {
+        pinButton.setColorFilter(ThemeUtils.resolveColor(this,
+                currentPinned ? R.attr.notelyPrimary : R.attr.notelyIcon));
+        pinButton.setContentDescription(getString(currentPinned
+                ? R.string.unpin_note : R.string.pin_note));
+    }
+
+    private void updateColorSelection() {
+        for (int i = 0; i < NoteColors.PALETTE.length; i++) {
+            colorRings.get(i).setVisibility(
+                    NoteColors.PALETTE[i].equals(currentColor) ? View.VISIBLE : View.GONE);
+        }
+    }
+
+    private static int colorLabelRes(String color) {
+        if (NoteColors.RED.equals(color)) {
+            return R.string.color_red;
+        }
+        if (NoteColors.ORANGE.equals(color)) {
+            return R.string.color_orange;
+        }
+        if (NoteColors.YELLOW.equals(color)) {
+            return R.string.color_yellow;
+        }
+        if (NoteColors.GREEN.equals(color)) {
+            return R.string.color_green;
+        }
+        if (NoteColors.BLUE.equals(color)) {
+            return R.string.color_blue;
+        }
+        if (NoteColors.PURPLE.equals(color)) {
+            return R.string.color_purple;
+        }
+        return R.string.color_default;
+    }
+
+    private void onPinClick() {
+        currentPinned = !currentPinned;
+        updatePinButton();
+        if (noteId == null) {
+            metadataDirty = true;
+            pendingPin = currentPinned;
+            return;
+        }
+        repository.setNotePinned(noteId, currentPinned, metadataCallback());
+    }
+
+    private void onColorPicked(String color) {
+        if (color.equals(currentColor)) {
+            return;
+        }
+        currentColor = color;
+        updateColorSelection();
+        if (noteId == null) {
+            metadataDirty = true;
+            pendingColor = color;
+            return;
+        }
+        repository.setNoteColor(noteId, color, metadataCallback());
+    }
+
+    private ResultCallback<Boolean> metadataCallback() {
+        return new ResultCallback<Boolean>() {
+            @Override
+            public void onResult(Boolean ok) {
+                if (isFinishing() || isDestroyed()) {
+                    return;
+                }
+                if (!Boolean.TRUE.equals(ok)) {
+                    Toast.makeText(NoteEditorActivity.this, R.string.save_failed,
+                            Toast.LENGTH_SHORT).show();
+                }
+            }
+        };
+    }
+
     private void loadExistingNote() {
         repository.getNoteById(noteId, new ResultCallback<Note>() {
             @Override
@@ -150,12 +284,16 @@ public final class NoteEditorActivity extends BaseActivity {
                 if (isFinishing() || isDestroyed()) {
                     return;
                 }
-                if (note == null) {
+                if (note == null || note.isTrashed()) {
                     Toast.makeText(NoteEditorActivity.this, R.string.note_not_found,
                             Toast.LENGTH_SHORT).show();
                     finish();
                     return;
                 }
+                currentPinned = note.isPinned;
+                currentColor = note.color;
+                updatePinButton();
+                updateColorSelection();
                 titleInput.setText(note.title);
                 contentInput.setText(note.content);
                 // Watchers attach only after the stored values are shown so a
@@ -308,6 +446,7 @@ public final class NoteEditorActivity extends BaseActivity {
                 public void onResult(Note created) {
                     if (created != null) {
                         noteId = created.id;
+                        applyPendingMetadata();
                     }
                     onSaveComplete(title, content, created != null);
                 }
@@ -319,6 +458,26 @@ public final class NoteEditorActivity extends BaseActivity {
                     onSaveComplete(title, content, Boolean.TRUE.equals(ok));
                 }
             });
+        }
+    }
+
+    /**
+     * Applies pin/color choices the user made before the first save created
+     * the note. These queue behind the create on the single disk worker, so
+     * the final persisted state is deterministic.
+     */
+    private void applyPendingMetadata() {
+        if (!metadataDirty) {
+            return;
+        }
+        metadataDirty = false;
+        if (pendingColor != null) {
+            repository.setNoteColor(noteId, pendingColor, metadataCallback());
+            pendingColor = null;
+        }
+        if (pendingPin) {
+            repository.setNotePinned(noteId, true, metadataCallback());
+            pendingPin = false;
         }
     }
 

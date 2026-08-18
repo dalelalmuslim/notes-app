@@ -3,6 +3,7 @@ package com.example.notely.data;
 import android.util.Log;
 
 import com.example.notely.model.Note;
+import com.example.notely.model.NoteColors;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -169,6 +170,19 @@ public final class LocalJsonStorage {
             sb.append(',');
             sb.append("\"updatedAt\":");
             sb.append(note.updatedAt);
+            sb.append(',');
+            sb.append("\"isPinned\":");
+            sb.append(note.isPinned);
+            sb.append(',');
+            sb.append("\"color\":");
+            appendString(sb, note.color);
+            sb.append(',');
+            sb.append("\"deletedAt\":");
+            if (note.deletedAt == null) {
+                sb.append("null");
+            } else {
+                sb.append(note.deletedAt);
+            }
             sb.append('}');
         }
         sb.append(']');
@@ -258,7 +272,18 @@ public final class LocalJsonStorage {
             Log.w(TAG, "Skipping malformed note entry in notes.json");
             return null;
         }
+
+        // New fields are optional for backward compatibility. Old records that
+        // predate this milestone load with safe defaults (unpinned, default
+        // color, not trashed). Any non-conforming value also falls back to the
+        // default so malformed entries never crash the app.
+        boolean isPinned = Boolean.TRUE.equals(map.get("isPinned"));
+        Object colorValue = map.get("color");
+        String color = colorValue instanceof String ? (String) colorValue : NoteColors.DEFAULT;
+        Object deletedAtValue = map.get("deletedAt");
+        Long deletedAt = deletedAtValue instanceof Long ? (Long) deletedAtValue : null;
+
         return new Note((String) id, (String) title, (String) content,
-                (Long) createdAt, (Long) updatedAt);
+                (Long) createdAt, (Long) updatedAt, isPinned, color, deletedAt);
     }
 }

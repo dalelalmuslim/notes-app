@@ -6,4 +6,18 @@
     <color name="ic_launcher_pen">#0F1D28</color>
     <color name="ic_launcher_line">#8FA6B8</color>
     <color name="ic_launcher_fold">#C5D3E0</color>
+
+    <!--
+        Semantic note colors (light palette). Notes persist semantic names
+        (see NoteColors); these values only decide how each name renders.
+        The default matches the note surface so default notes stay visually
+        clean. Dark variants live in values-night/colors.xml.
+    -->
+    <color name="note_default">#FFFFFF</color>
+    <color name="note_red">#F9DEDC</color>
+    <color name="note_orange">#FDE7D3</color>
+    <color name="note_yellow">#FEF3C7</color>
+    <color name="note_green">#DDF0E0</color>
+    <color name="note_blue">#DCEBF7</color>
+    <color name="note_purple">#E9E0F7</color>
 </resources>

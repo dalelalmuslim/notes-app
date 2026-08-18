@@ -8,6 +8,27 @@
     <string name="empty_state_subtitle">ستظهر ملاحظاتك هنا.</string>
     <string name="empty_state_new_note">أنشئ ملاحظتك الأولى</string>
 
+    <!-- البحث -->
+    <string name="search_hint">ابحث في الملاحظات</string>
+    <string name="search_clear">مسح البحث</string>
+    <string name="search_no_results_title">لا توجد ملاحظات مطابقة</string>
+    <string name="search_no_results_subtitle">جرّب بحثًا مختلفًا.</string>
+
+    <!-- التثبيت -->
+    <string name="pin_note">تثبيت الملاحظة</string>
+    <string name="unpin_note">إلغاء التثبيت</string>
+    <string name="pinned">مثبّتة</string>
+
+    <!-- ألوان الملاحظات -->
+    <string name="color_label">اللون</string>
+    <string name="color_default">اللون الافتراضي</string>
+    <string name="color_red">أحمر</string>
+    <string name="color_orange">برتقالي</string>
+    <string name="color_yellow">أصفر</string>
+    <string name="color_green">أخضر</string>
+    <string name="color_blue">أزرق</string>
+    <string name="color_purple">بنفسجي</string>
+
     <!-- المحرر -->
     <string name="new_note">ملاحظة جديدة</string>
     <string name="edit_note">تعديل الملاحظة</string>
@@ -29,9 +50,22 @@
 
     <!-- تأكيد الحذف -->
     <string name="delete_dialog_title">حذف الملاحظة</string>
-    <string name="delete_confirm_message">ستُحذف هذه الملاحظة نهائيًا ولا يمكن التراجع عن ذلك.</string>
+    <string name="move_to_trash_message">ستُنقل هذه الملاحظة إلى سلة المهملات. يمكنك استعادتها لاحقًا.</string>
     <string name="delete">حذف</string>
     <string name="cancel">إلغاء</string>
+
+    <!-- سلة المهملات -->
+    <string name="trash">سلة المهملات</string>
+    <string name="trash_empty">سلة المهملات فارغة</string>
+    <string name="trash_empty_subtitle">ستظهر هنا الملاحظات التي تحذفها.</string>
+    <string name="trash_title">سلة المهملات</string>
+    <string name="restore">استعادة</string>
+    <string name="restore_failed">تعذّر استعادة الملاحظة</string>
+    <string name="delete_forever">حذف نهائي</string>
+    <string name="delete_forever_title">حذف نهائي؟</string>
+    <string name="delete_forever_message">ستُحذف هذه الملاحظة نهائيًا ولا يمكن التراجع عن ذلك.</string>
+    <string name="note_restored">تمت استعادة الملاحظة</string>
+    <string name="note_deleted">تم حذف الملاحظة</string>
 
     <!-- الإعدادات -->
     <string name="settings_title">الإعدادات</string>
